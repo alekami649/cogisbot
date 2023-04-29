@@ -9,6 +9,7 @@ namespace CoGISBot.Telegram.Controllers;
 public class WebhookController : ControllerBase
 {
     readonly TelegramBotClient botClient;
+    static object ErrorsFile = new();
 
     public WebhookController(TelegramBotClient _botClient)
     {
@@ -19,7 +20,18 @@ public class WebhookController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> ProcesUpdate(Update update)
     {
-        await TelegramProcessing.ProcessUpdate(botClient, update);
-        return Ok();
+        try
+        {
+            await TelegramProcessing.ProcessUpdate(botClient, update);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            lock (ErrorsFile)
+            {
+                System.IO.File.AppendAllText("errors_webhook.txt", ex.ToString() + Environment.NewLine);
+            }
+            return Forbid();
+        }
     }
 }
