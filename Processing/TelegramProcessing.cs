@@ -133,7 +133,7 @@ public class TelegramProcessing
                 }
                 else if (message.Text == "/start" || message.Text == $"/start@{(await botClient.GetMeAsync()).Username}")
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Здраствуйте, {message.From.FirstName}.\nВы можете просто написать Ваш запрос в данный диалог, и бот автоматически найдёт результаты по запросу - карты, адреса, кадастровые номера.\nТакже в любом диалоге Вы можете воспользоваться ```@ {(await botClient.GetMeAsync()).Username ?? "cogisdemo_bot" } (Ваш запрос)```, Вам выдадут список карт по запросу, и возможность отправить любую карту в текущий чат.", ParseMode.Markdown);
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Здраствуйте, {message.From.FirstName}.\nВы можете просто написать Ваш запрос в данный диалог, и бот автоматически найдёт результаты по запросу - карты, адреса, кадастровые номера.\nТакже в любом диалоге Вы можете воспользоваться `@ {(await botClient.GetMeAsync()).Username ?? "cogisdemo_bot" } (Ваш запрос)`, Вам выдадут список карт по запросу, и возможность отправить любую карту в текущий чат.", ParseMode.Markdown);
                 }
                 else if (message.Text.StartsWith('/'))
                 {
@@ -151,7 +151,7 @@ public class TelegramProcessing
                     var keyboard = null as InlineKeyboardMarkup;
                     if (!mapsResults.Any())
                     {
-                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу карт не найдено.");
+                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу карт не найдено.", replyToMessageId: message.MessageId);
                     }
                     else
                     {
@@ -170,7 +170,7 @@ public class TelegramProcessing
                                 Url = mapsResults.First().GetUrl()
                             };
                             keyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] { InlineKeyboardButton.WithUrl("Открыть в браузере", mapsResults.First().GetUrl()),
-                                                                                         InlineKeyboardButton.WithWebApp("Открыть в Telegram", info) });
+                                                                                             InlineKeyboardButton.WithWebApp("Открыть в Telegram", info) });
                         }
                         else
                         {
@@ -192,7 +192,7 @@ public class TelegramProcessing
                     var addressResults = (await GeocoderProcessing.FindAddressCandidates(message.Text, GeocoderUrl)).Candidates.Where(x => x.Address.Length > 2).Take(5).ToList();
                     if (!addressResults.Any())
                     {
-                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу адресов не найдено.");
+                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу адресов не найдено.", replyToMessageId: message.MessageId);
                     }
                     else
                     {
@@ -215,7 +215,7 @@ public class TelegramProcessing
                     var cadastreResults = (await CadastreProcessing.Find(message.Text, CadastreUrl)).Results;
                     if (!cadastreResults.Any())
                     {
-                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу кадастровых номеров не найдено.");
+                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу кадастровых номеров не найдено.", replyToMessageId: message.MessageId);
                     }
                     else
                     {
