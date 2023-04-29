@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
@@ -58,6 +59,7 @@ public class TelegramProcessing
     {
         try
         {
+            Resources.Culture = CultureInfo.GetCultureInfo(inlineQuery.From.LanguageCode ?? "ru");
             var result = new List<InlineQueryResult>();
             var query = inlineQuery.Query.Trim();
             if (query == null || query == "" || string.IsNullOrWhiteSpace(query))
@@ -79,7 +81,7 @@ public class TelegramProcessing
                     result.AddRange(photos);
                 }
             }
-            await botClient.AnswerInlineQueryAsync(inlineQuery.Id, result.Take(50), 1, false);
+            await botClient.AnswerInlineQueryAsync(inlineQuery.Id, result.Take(50), 300, false);
         }
         catch (Exception ex)
         {
@@ -114,7 +116,6 @@ public class TelegramProcessing
     {
         try
         {
-            
             if (message.Text == null || message.Type != MessageType.Text)
             {
                 return;
@@ -126,18 +127,20 @@ public class TelegramProcessing
             }
             if (message.Chat.Type == ChatType.Private)
             {
+                Resources.Culture = CultureInfo.GetCultureInfo(message.From.LanguageCode ?? "ru");
                 message.Text = message.Text.Trim();
                 if (message.Text == "/get_catalog" || message.Text == $"/get_catalog@{(await botClient.GetMeAsync()).Username}")
                 {
                     CatalogNodes = FetchCatalogNodes();
+                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.CatalogFetched, ParseMode.Html);
                 }
                 else if (message.Text == "/start" || message.Text == $"/start@{(await botClient.GetMeAsync()).Username}")
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Здраствуйте, {message.From.FirstName}.\nВы можете просто написать Ваш запрос в данный диалог, и бот автоматически найдёт результаты по запросу - карты, адреса, кадастровые номера.\nТакже в любом диалоге Вы можете воспользоваться `@ {(await botClient.GetMeAsync()).Username ?? "cogisdemo_bot" } (Ваш запрос)`, Вам выдадут список карт по запросу, и возможность отправить любую карту в текущий чат.", ParseMode.Markdown);
+                    await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.Start, message.From.FirstName, (await botClient.GetMeAsync()).Username ?? "cogisdemo_bot"), ParseMode.Markdown);
                 }
                 else if (message.Text.StartsWith('/'))
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Вы попытались использовать команду \"{message.Text}\", но она не обрабатывается ботом.");
+                    await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.CommandNotFound, message.Text));
                 }
                 else if (message.Text.StartsWith('@'))
                 {
@@ -151,26 +154,26 @@ public class TelegramProcessing
                     var keyboard = null as InlineKeyboardMarkup;
                     if (!mapsResults.Any())
                     {
-                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу карт не найдено.", replyToMessageId: message.MessageId);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.MapsNotFound), replyToMessageId: message.MessageId);
                     }
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendLine($"Карты <a href=\"{BrandURL}\">{BrandName}</a> по запросу \"{message.Text}\":\n");
+                        builder.AppendFormat(Resources.MapResultsStart, message.Text, BrandName, BrandURL);
 
                         if (mapsResults.Count() == 1)
                         {
                             builder.AppendLine($"- <a href=\"{mapsResults.First().GetUrl()}\">{mapsResults.First().Caption}</a>");
                             if (mapsResults.First().Info.DescriptionLink != "" && mapsResults.First().Info.DescriptionCaption != "")
                             {
-                                builder.AppendLine("  - " + mapsResults.First().Info.GetDescriptionText());
+                                builder.AppendLine(" - - " + mapsResults.First().Info.GetDescriptionText());
                             }
                             var info = new WebAppInfo()
                             {
                                 Url = mapsResults.First().GetUrl()
                             };
-                            keyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] { InlineKeyboardButton.WithUrl("Открыть в браузере", mapsResults.First().GetUrl()),
-                                                                                             InlineKeyboardButton.WithWebApp("Открыть в Telegram", info) });
+                            keyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] { InlineKeyboardButton.WithUrl(Resources.OpenBrowser, mapsResults.First().GetUrl()),
+                                                                                             InlineKeyboardButton.WithWebApp(Resources.OpenWebapp, info) });
                         }
                         else
                         {
@@ -192,20 +195,15 @@ public class TelegramProcessing
                     var addressResults = (await GeocoderProcessing.FindAddressCandidates(message.Text, GeocoderUrl)).Candidates.Where(x => x.Address.Length > 2).Take(5).ToList();
                     if (!addressResults.Any())
                     {
-                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу адресов не найдено.", replyToMessageId: message.MessageId);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, Resources.AddressesNotFound, replyToMessageId: message.MessageId);
                     }
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendLine($"Адреса в <a href=\"{BrandURL}\">{BrandName}</a> по запросу \"{message.Text}\":\n");
+                        builder.AppendFormat(Resources.AddressResultsStart, message.Text, BrandName, BrandURL);
                         foreach (var result in addressResults)
                         {
-                            builder.AppendLine($"- {result.Address}"); //TODO: url
-                                                                       //if (result.Info.DescriptionLink != "" && result.Info.DescriptionCaption != "")
-                                                                       //{
-                                                                       //    builder.AppendLine("  - " + result.Info.GetDescriptionText());
-                                                                       //}
-                                                                       //builder.AppendLine();
+                            builder.AppendLine($"- {result.Address}");
                         }
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyToMessageId: message.MessageId);
                     }
@@ -215,20 +213,15 @@ public class TelegramProcessing
                     var cadastreResults = (await CadastreProcessing.Find(message.Text, CadastreUrl)).Results;
                     if (!cadastreResults.Any())
                     {
-                        await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу кадастровых номеров не найдено.", replyToMessageId: message.MessageId);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, Resources.CadastreNotFound, replyToMessageId: message.MessageId);
                     }
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendLine($"Кадастровые номера в <a href=\"{BrandURL}\">{BrandName}</a> по запросу \"{message.Text}\":\n");
+                        builder.AppendFormat(Resources.CadastreResultsStart, message.Text, BrandName, BrandURL);
                         foreach (var result in cadastreResults)
                         {
-                            builder.AppendLine($"- {result.Attributes.Address} ({result.Attributes.Number})"); //TODO: url
-                                                                                                               //if (result.Info.DescriptionLink != "" && result.Info.DescriptionCaption != "")
-                                                                                                               //{
-                                                                                                               //    builder.AppendLine("  - " + result.Info.GetDescriptionText());
-                                                                                                               //}
-                                                                                                               //builder.AppendLine();
+                            builder.AppendLine($"- {result.Attributes.Address} ({result.Attributes.Number})");
                         }
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyToMessageId: message.MessageId);
                     }
@@ -242,10 +235,6 @@ public class TelegramProcessing
             {
                 System.IO.File.AppendAllText("errors_textmessages.txt", ex.ToString() + Environment.NewLine);
             }
-        }
-        finally
-        {
-
         }
     }
     #endregion

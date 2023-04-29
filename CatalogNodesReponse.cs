@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Connections.Features;
 using Newtonsoft.Json;
+using System.Resources;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
@@ -92,7 +93,7 @@ public class CatalogItem
     public CatalogItem[]? Items { get; set; }
 
     [JsonIgnore]
-    public PortalInfo PortalInfo { get; set; } = new PortalInfo();
+    public PortalInfo Portal { get; set; } = new PortalInfo();
 
     public string GetUrl()
     {
@@ -108,16 +109,12 @@ public class CatalogItem
 
     public string GetText()
     {
-        return $"Посмотрите <a href=\"{GetUrl()}\">{Caption}</a> в <a href=\"{PortalInfo.Url}\">{PortalInfo.Name}</a>!";
+        return string.Format(Resources.MapShare, Caption, GetUrl(), PortalInfo.Name, PortalInfo.Url);
     }
 
     public InlineQueryResultArticle GetArticle()
     {
-        //var info = new WebAppInfo()
-        //{
-        //    Url = GetUrl(),
-        //};
-        var keyboard = new InlineKeyboardMarkup(new[] { InlineKeyboardButton.WithUrl("Открыть в браузере", GetUrl()) });
+        var keyboard = new InlineKeyboardMarkup(new[] { InlineKeyboardButton.WithUrl(Resources.OpenBrowser, GetUrl()) });
         var result = new InlineQueryResultArticle(Url, Caption, new InputTextMessageContent(GetText())
         {
             DisableWebPagePreview = false,
@@ -168,7 +165,7 @@ public class CatalogItemInfo
 
     public string GetDescriptionText()
     {
-        return $"{DescriptionCaption}: {DescriptionLink}";
+        return $"<a href=\"{DescriptionLink}\">{Resources.MapDescription}</a>";
     }
 
     public string GetImageUrl()
