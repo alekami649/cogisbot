@@ -6,7 +6,7 @@ public class GeocoderProcessing
 {
     public static async Task<AddressCandidatesResponse> FindAddressCandidates(string query, string serviceUrl)
     {
-        var httpUrl = new Uri(serviceUrl + $"/findAddressCandidates/?SingleLine={query}&f=json&outSR={{\"wkid\":4326,\"wkt\":null,\"latestWkid\":4326}}&outFields=*");
+        var httpUrl = new Uri(serviceUrl + $"/findAddressCandidates/?SingleLine={query}&f=json&outSR={{\"wkid\":4326,\"wkt\":null,\"latestWkid\":4326}}&outFields=*&maxLocations=5");
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, httpUrl);
         using var httpClient = new HttpClient();
         using var httpResponse = await httpClient.SendAsync(httpRequest);

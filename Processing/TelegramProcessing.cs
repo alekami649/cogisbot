@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Data.Common;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -24,6 +25,7 @@ public class TelegramProcessing
     public static string BrandName { get; set; } = System.IO.File.ReadAllText("brandname.txt");
     public static string BrandURL { get; set; } = System.IO.File.ReadAllText("brandurl.txt");
     public static string GeocoderUrl { get; set; } = System.IO.File.ReadAllText("geocoderUrl.txt");
+    public static string CadastreUrl { get; set; } = System.IO.File.ReadAllText("cadastreUrl.txt");
     public static CatalogNodesReponse CatalogNodes { get; set; } = FetchCatalogNodes();
 
     public static async Task ProcessUpdate(TelegramBotClient botClient, Update update)
@@ -165,7 +167,29 @@ public class TelegramProcessing
                         //{
                         //    builder.AppendLine("  - " + result.Info.GetDescriptionText());
                         //}
-                        builder.AppendLine();
+                        //builder.AppendLine();
+                    }
+                    await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
+                }
+                #endregion
+                #region Cadastre
+                var cadastreResults = (await CadastreProcessing.Find(message.Text, CadastreUrl)).Results;
+                if (!cadastreResults.Any())
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу кадастровых номеров не найдено.");
+                }
+                else
+                {
+                    var builder = new StringBuilder();
+                    builder.AppendLine($"Кадастровые номера в <a href=\"{BrandURL}\">{BrandName}</a> по запросу \"{message.Text}\":\n");
+                    foreach (var result in cadastreResults)
+                    {
+                        builder.AppendLine($"- {result.Attributes.Address} ({result.Attributes.Number})"); //TODO: url
+                        //if (result.Info.DescriptionLink != "" && result.Info.DescriptionCaption != "")
+                        //{
+                        //    builder.AppendLine("  - " + result.Info.GetDescriptionText());
+                        //}
+                        //builder.AppendLine();
                     }
                     await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
                 }
