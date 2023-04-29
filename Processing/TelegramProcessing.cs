@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder.Extensions;
 using Newtonsoft.Json;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
@@ -113,6 +114,7 @@ public class TelegramProcessing
     {
         try
         {
+            
             if (message.Text == null || message.Type != MessageType.Text)
             {
                 return;
@@ -143,6 +145,9 @@ public class TelegramProcessing
                 }
                 else
                 {
+                    await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
                     #region Maps
                     var mapsResults = CatalogNodes.Search(message.Text).DistinctBy(x => x.Caption).Take(5);
                     var keyboard = null as InlineKeyboardMarkup;
@@ -206,6 +211,11 @@ public class TelegramProcessing
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
                     }
                     #endregion
+                    stopwatch.Stop();
+                    if (stopwatch.Elapsed.TotalSeconds > 3)
+                    {
+                        await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+                    }
                     #region Cadastre
                     var cadastreResults = (await CadastreProcessing.Find(message.Text, CadastreUrl)).Results;
                     if (!cadastreResults.Any())
