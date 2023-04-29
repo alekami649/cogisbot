@@ -24,6 +24,9 @@
     <None Update="brandurl.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="geocoderUrl.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="telegram.secret">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

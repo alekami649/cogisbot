@@ -160,6 +160,17 @@ public class CatalogItemInfo
     [JsonProperty("PreviewImage")]
     public string ImageGuid { get; set; } = "";
 
+    [JsonProperty("LinkControlCaption")]
+    public string DescriptionCaption { get; set; } = "Описание";
+
+    [JsonProperty("LinkControlUrl")]
+    public string DescriptionLink { get; set; } = "";
+
+    public string GetDescriptionText()
+    {
+        return $"{DescriptionCaption}: {DescriptionLink}";
+    }
+
     public string GetImageUrl()
     {
         return $"https://cogisdemo.dataeast.com/portal/Images/{ImageGuid}.png";

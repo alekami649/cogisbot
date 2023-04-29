@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Builder.Extensions;
+using Newtonsoft.Json;
 using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -6,6 +7,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CoGISBot.Telegram.Processing;
 
@@ -21,6 +23,7 @@ public class TelegramProcessing
 
     public static string BrandName { get; set; } = System.IO.File.ReadAllText("brandname.txt");
     public static string BrandURL { get; set; } = System.IO.File.ReadAllText("brandurl.txt");
+    public static string GeocoderUrl { get; set; } = System.IO.File.ReadAllText("geocoderUrl.txt");
     public static CatalogNodesReponse CatalogNodes { get; set; } = FetchCatalogNodes();
 
     public static async Task ProcessUpdate(TelegramBotClient botClient, Update update)
@@ -85,31 +88,88 @@ public class TelegramProcessing
         }
         if (message.Chat.Type == ChatType.Private)
         {
+            message.Text = message.Text.Trim();
             if (message.Text == "/get_catalog" || message.Text == $"/get_catalog@{(await botClient.GetMeAsync()).Username}")
             {
                 CatalogNodes = FetchCatalogNodes();
+            }
+            else if (message.Text == "/start" || message.Text == $"/start@{(await botClient.GetMeAsync()).Username}")
+            {
+                await botClient.SendTextMessageAsync(message.Chat.Id, $"Здраствуйте, {message.From.FirstName}. Этот бот предназначен для использования CoGIS в Telegram.\nВы можете просто написать Ваш запрос, и бот автоматически найдёт результаты по запросу - карты и адреса.\nТакже в любом диалоге Вы можете воспользоваться \"{message.From.Username} (Ваш запрос)\", Вам выдадут список карт по запросу, и возможность отправить любую в текущий чат.");
             }
             else if (message.Text.StartsWith('/'))
             {
                 await botClient.SendTextMessageAsync(message.Chat.Id, $"Вы попытались использовать команду \"{message.Text}\", но она не обрабатывается ботом.");
             }
+            else if (message.Text.StartsWith('@'))
+            {
+                return;
+            }
             else
             {
-                var results = CatalogNodes.Search(message.Text);
-                if (!results.Any())
+                #region Maps
+                var mapsResults = CatalogNodes.Search(message.Text).DistinctBy(x => x.Caption).Take(5);
+                var keyboard = null as InlineKeyboardMarkup;
+                if (!mapsResults.Any())
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу не найдено результатов.");
+                    await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу карт не найдено.");
                 }
                 else
                 {
                     var builder = new StringBuilder();
                     builder.AppendLine($"Карты <a href=\"{BrandURL}\">{BrandName}</a> по запросу \"{message.Text}\":\n");
-                    foreach (var result in results.DistinctBy(x => x.Caption))
+                    
+                    if (mapsResults.Count() == 1)
                     {
-                        builder.AppendLine($"<a href=\"{result.GetUrl()}\">{result.Caption}</a>");
+                        builder.AppendLine($"- <a href=\"{mapsResults.First().GetUrl()}\">{mapsResults.First().Caption}</a>");
+                        if (mapsResults.First().Info.DescriptionLink != "" && mapsResults.First().Info.DescriptionCaption != "")
+                        {
+                            builder.AppendLine("  - " + mapsResults.First().Info.GetDescriptionText());
+                        }
+                        var info = new WebAppInfo()
+                        {
+                            Url = mapsResults.First().GetUrl()
+                        };
+                        keyboard = new InlineKeyboardMarkup(new InlineKeyboardButton[] { InlineKeyboardButton.WithUrl("Открыть в браузере", mapsResults.First().GetUrl()),
+                                                                                         InlineKeyboardButton.WithWebApp("Открыть в Telegram", info) });
+                    }
+                    else
+                    {
+                        foreach (var result in mapsResults)
+                        {
+                            builder.AppendLine($"- <a href=\"{result.GetUrl()}\">{result.Caption}</a>");
+                            if (result.Info.DescriptionLink != "" && result.Info.DescriptionCaption != "")
+                            {
+                                builder.AppendLine("  - " + result.Info.GetDescriptionText());
+                            }
+                            builder.AppendLine();
+                        }
+                    }
+                    await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyMarkup: keyboard);
+                }
+                #endregion
+                #region Addresses
+                var addressResults = (await GeocoderProcessing.FindAddressCandidates(message.Text, GeocoderUrl)).Candidates.Where(x => x.Address.Length > 2).Take(5).ToList();
+                if (!addressResults.Any())
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, "По Вашему запросу адресов не найдено.");
+                }
+                else
+                {
+                    var builder = new StringBuilder();
+                    builder.AppendLine($"Адреса в <a href=\"{BrandURL}\">{BrandName}</a> по запросу \"{message.Text}\":\n");
+                    foreach (var result in addressResults)
+                    {
+                        builder.AppendLine($"- {result.Address}"); //TODO: url
+                        //if (result.Info.DescriptionLink != "" && result.Info.DescriptionCaption != "")
+                        //{
+                        //    builder.AppendLine("  - " + result.Info.GetDescriptionText());
+                        //}
+                        builder.AppendLine();
                     }
                     await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
                 }
+                #endregion
             }
         }
     }
