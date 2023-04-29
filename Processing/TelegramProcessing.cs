@@ -146,8 +146,6 @@ public class TelegramProcessing
                 else
                 {
                     await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-                    var stopwatch = new Stopwatch();
-                    stopwatch.Start();
                     #region Maps
                     var mapsResults = CatalogNodes.Search(message.Text).DistinctBy(x => x.Caption).Take(5);
                     var keyboard = null as InlineKeyboardMarkup;
@@ -189,6 +187,7 @@ public class TelegramProcessing
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyMarkup: keyboard);
                     }
                     #endregion
+                    await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     #region Addresses
                     var addressResults = (await GeocoderProcessing.FindAddressCandidates(message.Text, GeocoderUrl)).Candidates.Where(x => x.Address.Length > 2).Take(5).ToList();
                     if (!addressResults.Any())
@@ -211,11 +210,7 @@ public class TelegramProcessing
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
                     }
                     #endregion
-                    stopwatch.Stop();
-                    if (stopwatch.Elapsed.TotalSeconds > 3)
-                    {
-                        await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
-                    }
+                    await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     #region Cadastre
                     var cadastreResults = (await CadastreProcessing.Find(message.Text, CadastreUrl)).Results;
                     if (!cadastreResults.Any())
