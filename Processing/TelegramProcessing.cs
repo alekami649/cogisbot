@@ -133,7 +133,7 @@ public class TelegramProcessing
                 }
                 else if (message.Text == "/start" || message.Text == $"/start@{(await botClient.GetMeAsync()).Username}")
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Здраствуйте, {message.From.FirstName}. Этот бот предназначен для использования CoGIS в Telegram.\nВы можете просто написать Ваш запрос, и бот автоматически найдёт результаты по запросу - карты и адреса.\nТакже в любом диалоге Вы можете воспользоваться \"{message.From.Username} (Ваш запрос)\", Вам выдадут список карт по запросу, и возможность отправить любую в текущий чат.");
+                    await botClient.SendTextMessageAsync(message.Chat.Id, $"Здраствуйте, {message.From.FirstName}.\nВы можете просто написать Ваш запрос в данный диалог, и бот автоматически найдёт результаты по запросу - карты, адреса, кадастровые номера.\nТакже в любом диалоге Вы можете воспользоваться ```@ {(await botClient.GetMeAsync()).Username ?? "cogisdemo_bot" } (Ваш запрос)```, Вам выдадут список карт по запросу, и возможность отправить любую карту в текущий чат.", ParseMode.Markdown);
                 }
                 else if (message.Text.StartsWith('/'))
                 {
