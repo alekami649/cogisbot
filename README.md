@@ -8,4 +8,5 @@ Just type your search prompt to bot's PM, and bot will send you maps/addresses/c
 
 ### Maps sharing
 You can write "@cogisdemo_bot" in any chat, and get a list of first 50 maps on [CoGIS demonstration portal](https://cogisdemo.dataeast.com/portal).
+
 You can write "@cogisdemo_bot (search prompt)" in any chat, and get a list of first 50 according to your prompt from [CoGIS demonstration portal](https://cogisdemo.dataeast.com/portal).
