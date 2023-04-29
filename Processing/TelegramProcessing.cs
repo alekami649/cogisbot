@@ -184,7 +184,7 @@ public class TelegramProcessing
                                 builder.AppendLine();
                             }
                         }
-                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyMarkup: keyboard);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyMarkup: keyboard, replyToMessageId: message.MessageId);
                     }
                     #endregion
                     await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
@@ -207,7 +207,7 @@ public class TelegramProcessing
                                                                        //}
                                                                        //builder.AppendLine();
                         }
-                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyToMessageId: message.MessageId);
                     }
                     #endregion
                     await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
@@ -230,7 +230,7 @@ public class TelegramProcessing
                                                                                                                //}
                                                                                                                //builder.AppendLine();
                         }
-                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyToMessageId: message.MessageId);
                     }
                     #endregion
                 }
