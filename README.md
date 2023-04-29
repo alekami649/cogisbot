@@ -2,6 +2,8 @@
 
 You can try it via [@cogisdemo_bot](https://t.me/cogisdemo_bot).
 
+![Bot's about or What this bot can do?](https://raw.githubusercontent.com/alekami649/cogisbot/master/Images/bot_about.png)
+
 ## Features
 ### Searching
 Just type your search prompt to bot's PM, and bot will send you maps/addresses/cadastre number results.
