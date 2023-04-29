@@ -70,7 +70,7 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Addresses from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt;according to search prompt &quot;{0}&quot;:.
+        ///   Ищет локализованную строку, похожую на Addresses from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;&lt;b&gt;{0}&lt;/b&gt;&quot;:.
         /// </summary>
         internal static string AddressResultsStart {
             get {
@@ -88,7 +88,7 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Cadastre numbers from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt;according to search prompt &quot;{0}&quot;:.
+        ///   Ищет локализованную строку, похожую на Cadastre numbers from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;{0}&quot;:.
         /// </summary>
         internal static string CadastreResultsStart {
             get {
@@ -124,7 +124,7 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Maps from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt;according to search prompt &quot;{0}&quot;:.
+        ///   Ищет локализованную строку, похожую на Maps from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;{0}&quot;:.
         /// </summary>
         internal static string MapResultsStart {
             get {

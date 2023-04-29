@@ -104,7 +104,7 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
     <comment>{0} - first name; {1} - bot's username</comment>
   </data>
   <data name="MapResultsStart" xml:space="preserve">
-    <value>Maps from &lt;a href="{2}"&gt;{1}&lt;/a&gt;according to search prompt "{0}":</value>
+    <value>Maps from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "{0}":</value>
     <comment>{0} - search prompt; {1} - brand name; {2} - brand url</comment>
   </data>
   <data name="MapsNotFound" xml:space="preserve">
@@ -118,7 +118,7 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
     <value>No addresses found by provided search prompt.</value>
   </data>
   <data name="AddressResultsStart" xml:space="preserve">
-    <value>Addresses from &lt;a href="{2}"&gt;{1}&lt;/a&gt;according to search prompt "{0}":</value>
+    <value>Addresses from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "&lt;b&gt;{0}&lt;/b&gt;":</value>
     <comment>{0} - search prompt; {1} - brand name; {2} - brand url</comment>
   </data>
   <data name="MapShare" xml:space="preserve">
@@ -138,7 +138,7 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
     <value>No cadastre numbers found by your search prompt.</value>
   </data>
   <data name="CadastreResultsStart" xml:space="preserve">
-    <value>Cadastre numbers from &lt;a href="{2}"&gt;{1}&lt;/a&gt;according to search prompt "{0}":</value>
+    <value>Cadastre numbers from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "{0}":</value>
     <comment>{0} - search prompt; {1} - brand name; {2} - brand url</comment>
   </data>
   <data name="CatalogFetched" xml:space="preserve">

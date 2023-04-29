@@ -138,7 +138,7 @@ public class TelegramProcessing
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.Start, message.From.FirstName, (await botClient.GetMeAsync()).Username ?? "cogisdemo_bot"), ParseMode.Markdown);
                 }
-                else if (message.Text.StartsWith('/'))
+                else if (message.Text.StartsWith('/') || message.ViaBot != null)
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.CommandNotFound, message.Text));
                 }
@@ -159,7 +159,7 @@ public class TelegramProcessing
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendFormat(Resources.MapResultsStart, message.Text, BrandName, BrandURL);
+                        builder.AppendFormat(Resources.MapResultsStart + Environment.NewLine, message.Text, BrandName, BrandURL);
 
                         if (mapsResults.Count() == 1)
                         {
@@ -200,7 +200,7 @@ public class TelegramProcessing
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendFormat(Resources.AddressResultsStart, message.Text, BrandName, BrandURL);
+                        builder.AppendFormat(Resources.AddressResultsStart + Environment.NewLine, message.Text, BrandName, BrandURL);
                         foreach (var result in addressResults)
                         {
                             builder.AppendLine($"- {result.Address}");
@@ -218,7 +218,7 @@ public class TelegramProcessing
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendFormat(Resources.CadastreResultsStart, message.Text, BrandName, BrandURL);
+                        builder.AppendFormat(Resources.CadastreResultsStart + Environment.NewLine, message.Text, BrandName, BrandURL);
                         foreach (var result in cadastreResults)
                         {
                             builder.AppendLine($"- {result.Attributes.Address} ({result.Attributes.Number})");
