@@ -144,4 +144,40 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
   <data name="CatalogFetched" xml:space="preserve">
     <value>Updated catalog information.</value>
   </data>
+  <data name="ArgumentsCountInvalid" xml:space="preserve">
+    <value>Provided argument count is invalid.</value>
+  </data>
+  <data name="StartedSearch" xml:space="preserve">
+    <value>The search is performed for maps, addresses, cadastral numbers by search prompt: {0}.</value>
+  </data>
+  <data name="NameParam" xml:space="preserve">
+    <value>Portal's name: {0}.</value>
+  </data>
+  <data name="UrlParam" xml:space="preserve">
+    <value>Portal's URL: {0}.</value>
+  </data>
+  <data name="GeocoderParam" xml:space="preserve">
+    <value>Geo-coder URL: {0}.</value>
+  </data>
+  <data name="CadastreParam" xml:space="preserve">
+    <value>Cadastre map-server URL: {0}.</value>
+  </data>
+  <data name="EditCadastreUrl" xml:space="preserve">
+    <value>Change cadastre map-server URL</value>
+  </data>
+  <data name="EditName" xml:space="preserve">
+    <value>Change portal's name</value>
+  </data>
+  <data name="EditUrl" xml:space="preserve">
+    <value>Change portal's URL</value>
+  </data>
+  <data name="EditGeocoderUrl" xml:space="preserve">
+    <value>Change geocoder URL</value>
+  </data>
+  <data name="SendName" xml:space="preserve">
+    <value>Send me new portal's name...</value>
+  </data>
+  <data name="SendUrl" xml:space="preserve">
+    <value>Send me new portal's URL...</value>
+  </data>
 </root>

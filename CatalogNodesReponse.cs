@@ -1,18 +1,9 @@
-﻿using Microsoft.AspNetCore.Connections.Features;
-using Newtonsoft.Json;
-using System.Resources;
-using Telegram.Bot.Types;
+﻿using Newtonsoft.Json;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CoGISBot.Telegram;
-
-public class PortalInfo
-{
-    public static string Name { get; set; } = System.IO.File.ReadAllText("brandname.txt");
-    public static string Url { get; set; } = System.IO.File.ReadAllText("brandurl.txt");
-}
 
 public class CatalogNodesReponse
 {
@@ -92,9 +83,6 @@ public class CatalogItem
     [JsonProperty(nameof(Items))]
     public CatalogItem[]? Items { get; set; }
 
-    [JsonIgnore]
-    public PortalInfo Portal { get; set; } = new PortalInfo();
-
     public string GetUrl()
     {
         if (!string.IsNullOrWhiteSpace(FullUrl))
@@ -109,7 +97,7 @@ public class CatalogItem
 
     public string GetText()
     {
-        return string.Format(Resources.MapShare, Caption, GetUrl(), PortalInfo.Name, PortalInfo.Url);
+        return string.Format(Resources.MapShare, Caption, GetUrl(), GlobalSettings.Instance.Name, GlobalSettings.Instance.Url);
     }
 
     public InlineQueryResultArticle GetArticle()

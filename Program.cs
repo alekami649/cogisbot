@@ -1,4 +1,5 @@
 using CoGISBot.Telegram;
+using CoGISBot.Telegram.Processing;
 using Telegram.Bot;
 
 try
@@ -12,7 +13,6 @@ try
     builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
-
 
     if (app.Environment.IsDevelopment())
     {

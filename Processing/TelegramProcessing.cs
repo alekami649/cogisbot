@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder.Extensions;
+﻿using CoGISBot.Telegram.Helpers;
 using Newtonsoft.Json;
-using System.Data.Common;
-using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -25,10 +20,8 @@ public class TelegramProcessing
         return JsonConvert.DeserializeObject<CatalogNodesReponse>(response.Content.ReadAsStringAsync().Result) ?? new();
     }
 
-    public static string BrandName { get; set; } = System.IO.File.ReadAllText("brandname.txt");
-    public static string BrandURL { get; set; } = System.IO.File.ReadAllText("brandurl.txt");
-    public static string GeocoderUrl { get; set; } = System.IO.File.ReadAllText("geocoderUrl.txt");
-    public static string CadastreUrl { get; set; } = System.IO.File.ReadAllText("cadastreUrl.txt");
+    public static string DefaultBotUsername { get; set; } = "cogisdemo_bot";
+    public static Dictionary<long, UserState> States { get; set; } = new();
     static object ErrorsFile { get; set; } = new();
     public static CatalogNodesReponse CatalogNodes { get; set; } = FetchCatalogNodes();
 
@@ -125,20 +118,55 @@ public class TelegramProcessing
                 await botClient.LeaveChatAsync(message.Chat);
                 return;
             }
-            if (message.Chat.Type == ChatType.Private)
+            if (message.Chat.Type == ChatType.Private && message.ViaBot == null)
             {
                 Resources.Culture = CultureInfo.GetCultureInfo(message.From.LanguageCode ?? "ru");
                 message.Text = message.Text.Trim();
-                if (message.Text == "/get_catalog" || message.Text == $"/get_catalog@{(await botClient.GetMeAsync()).Username}")
+                var myself = await botClient.GetMeAsync();
+                myself.Username ??= DefaultBotUsername;
+                if (message.Text.IsCommandThrowed("/get_catalog", myself.Username))
                 {
+                    await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     CatalogNodes = FetchCatalogNodes();
-                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.CatalogFetched, ParseMode.Html);
+                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.CatalogFetched, message.MessageThreadId, ParseMode.Html);
                 }
-                else if (message.Text == "/start" || message.Text == $"/start@{(await botClient.GetMeAsync()).Username}")
+                else if (message.Text.IsCommandThrowed("/start", myself.Username))
                 {
-                    await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.Start, message.From.FirstName, (await botClient.GetMeAsync()).Username ?? "cogisdemo_bot"), ParseMode.Markdown);
+                    var webApp = new WebAppInfo { Url = GlobalSettings.Instance.Url };
+                    var buttons = new List<InlineKeyboardButton> { InlineKeyboardButton.WithWebApp(Resources.OpenWebapp, webApp), InlineKeyboardButton.WithUrl(Resources.OpenBrowser, GlobalSettings.Instance.Url) };
+                    var keyboard = new InlineKeyboardMarkup(buttons);
+                    await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.Start, message.From.FirstName, (await botClient.GetMeAsync()).Username ?? DefaultBotUsername), message.MessageThreadId, ParseMode.Markdown, replyMarkup: keyboard);
                 }
-                else if (message.Text.StartsWith('/') || message.ViaBot != null)
+                else if (message.Text.IsCommandThrowed("/maps", myself.Username))
+                {
+                    if (message.Text.Equals("/maps", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var maps = CatalogNodes.GetMaps(25);
+                        var builder = new StringBuilder();
+                        foreach (var map in maps)
+                        {
+                            builder.AppendFormat("[{0}]({1}) - [{2}]({3})", map.Caption, map.FullUrl, map.Info.DescriptionCaption, map.Info.DescriptionLink);
+                        }
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId, ParseMode.Markdown);
+                    }
+                }
+                else if (message.Text.IsCommandThrowed("/adminpanel", myself.Username))
+                {
+                    if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
+                    {
+                        var builder = new StringBuilder();
+                        builder.AppendLine(string.Format(Resources.NameParam, GlobalSettings.Instance.Name));
+                        builder.AppendLine(string.Format(Resources.UrlParam, GlobalSettings.Instance.Url));
+                        builder.AppendLine();
+                        builder.AppendLine(string.Format(Resources.GeocoderParam, GlobalSettings.Instance.GeocoderUrl));
+                        builder.AppendLine(string.Format(Resources.CadastreParam, GlobalSettings.Instance.CadastreUrl));
+
+                        var buttons = new List<List<InlineKeyboardButton>>();
+                        var firstLine = new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.EditName, "editName"), InlineKeyboardButton.WithCallbackData(Resources.EditUrl, "editUrl") };
+                        var secoundLine = new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.EditGeocoderUrl, "editGeocoderUrl"), InlineKeyboardButton.WithCallbackData(Resources.EditCadastreUrl, "editCadastreUrl") };
+                    }
+                }
+                else if (message.Text.StartsWith('/'))
                 {
                     await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.CommandNotFound, message.Text));
                 }
@@ -148,6 +176,8 @@ public class TelegramProcessing
                 }
                 else
                 {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, string.Format(Resources.StartedSearch, message.Text));
+
                     await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     #region Maps
                     var mapsResults = CatalogNodes.Search(message.Text).DistinctBy(x => x.Caption).Take(5);
@@ -159,7 +189,7 @@ public class TelegramProcessing
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendFormat(Resources.MapResultsStart + Environment.NewLine, message.Text, BrandName, BrandURL);
+                        builder.AppendFormat(Resources.MapResultsStart + Environment.NewLine, message.Text, GlobalSettings.Instance.Name, GlobalSettings.Instance.Url);
 
                         if (mapsResults.Count() == 1)
                         {
@@ -187,12 +217,12 @@ public class TelegramProcessing
                                 builder.AppendLine();
                             }
                         }
-                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyMarkup: keyboard, replyToMessageId: message.MessageId);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId, ParseMode.Html, replyMarkup: keyboard, replyToMessageId: message.MessageId);
                     }
                     #endregion
                     await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     #region Addresses
-                    var addressResults = (await GeocoderProcessing.FindAddressCandidates(message.Text, GeocoderUrl)).Candidates.Where(x => x.Address.Length > 2).Take(5).ToList();
+                    var addressResults = (await GeocoderProcessing.FindAddressCandidates(message.Text, GlobalSettings.Instance.GeocoderUrl)).Candidates.Where(x => x.Address.Length > 2).Take(5).ToList();
                     if (!addressResults.Any())
                     {
                         await botClient.SendTextMessageAsync(message.Chat.Id, Resources.AddressesNotFound, replyToMessageId: message.MessageId);
@@ -200,17 +230,17 @@ public class TelegramProcessing
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendFormat(Resources.AddressResultsStart + Environment.NewLine, message.Text, BrandName, BrandURL);
+                        builder.AppendFormat(Resources.AddressResultsStart + Environment.NewLine, message.Text, GlobalSettings.Instance.Name, GlobalSettings.Instance.Url);
                         foreach (var result in addressResults)
                         {
                             builder.AppendLine($"- {result.Address}");
                         }
-                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyToMessageId: message.MessageId);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId, ParseMode.Html, replyToMessageId: message.MessageId);
                     }
                     #endregion
                     await botClient.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
                     #region Cadastre
-                    var cadastreResults = (await CadastreProcessing.Find(message.Text, CadastreUrl)).Results;
+                    var cadastreResults = (await CadastreProcessing.Find(message.Text, GlobalSettings.Instance.CadastreUrl)).Results;
                     if (!cadastreResults.Any())
                     {
                         await botClient.SendTextMessageAsync(message.Chat.Id, Resources.CadastreNotFound, replyToMessageId: message.MessageId);
@@ -218,12 +248,12 @@ public class TelegramProcessing
                     else
                     {
                         var builder = new StringBuilder();
-                        builder.AppendFormat(Resources.CadastreResultsStart + Environment.NewLine, message.Text, BrandName, BrandURL);
+                        builder.AppendFormat(Resources.CadastreResultsStart + Environment.NewLine, message.Text, GlobalSettings.Instance.Name, GlobalSettings.Instance.Url);
                         foreach (var result in cadastreResults)
                         {
                             builder.AppendLine($"- {result.Attributes.Address} ({result.Attributes.Number})");
                         }
-                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), ParseMode.Html, replyToMessageId: message.MessageId);
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId, ParseMode.Html, replyToMessageId: message.MessageId);
                     }
                     #endregion
                 }
@@ -238,4 +268,51 @@ public class TelegramProcessing
         }
     }
     #endregion
+
+    public static async Task ProcessCallbackQuery(TelegramBotClient botClient, CallbackQuery callbackQuery)
+    {
+        if (string.IsNullOrWhiteSpace(callbackQuery.Data) || callbackQuery.Message == null)
+        {
+            return;
+        }
+        if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
+        {
+            if (callbackQuery.Data.Equals("editName", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (!States.ContainsKey(callbackQuery.From.Id))
+                {
+                    States.Add(callbackQuery.From.Id, UserState.Default);
+                }
+                States[callbackQuery.From.Id] = UserState.EditName;
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName, callbackQuery.Message.MessageThreadId);
+            }
+            else if (callbackQuery.Data.Equals("editUrl", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (!States.ContainsKey(callbackQuery.From.Id))
+                {
+                    States.Add(callbackQuery.From.Id, UserState.Default);
+                }
+                States[callbackQuery.From.Id] = UserState.EditUrl;
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendUrl, callbackQuery.Message.MessageThreadId);
+            }
+            else if (callbackQuery.Data.Equals("editGeocoder", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (!States.ContainsKey(callbackQuery.From.Id))
+                {
+                    States.Add(callbackQuery.From.Id, UserState.Default);
+                }
+                States[callbackQuery.From.Id] = UserState.EditGeocoder;
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName, callbackQuery.Message.MessageThreadId);
+            }
+            else if (callbackQuery.Data.Equals("editCadastre", StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (!States.ContainsKey(callbackQuery.From.Id))
+                {
+                    States.Add(callbackQuery.From.Id, UserState.Default);
+                }
+                States[callbackQuery.From.Id] = UserState.EditCadastre;
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName, callbackQuery.Message.MessageThreadId);
+            }
+        }
+    }
 }

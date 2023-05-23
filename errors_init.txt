@@ -1,0 +1,26 @@
+System.TypeInitializationException: The type initializer for 'CoGISBot.Telegram.Processing.HFProcessing' threw an exception.
+ ---> System.IO.FileNotFoundException: Could not find file 'C:\Projects\CoGISBot.Telegram\hf.secret'.
+File name: 'C:\Projects\CoGISBot.Telegram\hf.secret'
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Encoding encoding, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at CoGISBot.Telegram.Processing.HFProcessing..cctor() in C:\Projects\CoGISBot.Telegram\Processing\HFProcessing.cs:line 9
+   --- End of inner exception stack trace ---
+   at CoGISBot.Telegram.Processing.HFProcessing.AnswerAsync(String question, String context) in C:\Projects\CoGISBot.Telegram\Processing\HFProcessing.cs:line 16
+   at Program.<Main>$(String[] args) in C:\Projects\CoGISBot.Telegram\Program.cs:line 19
+System.TypeInitializationException: The type initializer for 'CoGISBot.Telegram.Processing.HFProcessing' threw an exception.
+ ---> System.IO.FileNotFoundException: Could not find file 'C:\Projects\CoGISBot.Telegram\hf.secret'.
+File name: 'C:\Projects\CoGISBot.Telegram\hf.secret'
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.OSFileStreamStrategy..ctor(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.Strategies.FileStreamHelpers.ChooseStrategyCore(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.StreamReader.ValidateArgsAndOpenPath(String path, Encoding encoding, Int32 bufferSize)
+   at System.IO.File.ReadAllText(String path, Encoding encoding)
+   at CoGISBot.Telegram.Processing.HFProcessing..cctor() in C:\Projects\CoGISBot.Telegram\Processing\HFProcessing.cs:line 9
+   --- End of inner exception stack trace ---
+   at CoGISBot.Telegram.Processing.HFProcessing.AnswerAsync(String question, String context) in C:\Projects\CoGISBot.Telegram\Processing\HFProcessing.cs:line 16
+   at Program.<Main>$(String[] args) in C:\Projects\CoGISBot.Telegram\Program.cs:line 20

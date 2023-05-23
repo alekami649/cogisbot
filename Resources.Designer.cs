@@ -79,11 +79,29 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Provided argument count is invalid..
+        /// </summary>
+        internal static string ArgumentsCountInvalid {
+            get {
+                return ResourceManager.GetString("ArgumentsCountInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на No cadastre numbers found by your search prompt..
         /// </summary>
         internal static string CadastreNotFound {
             get {
                 return ResourceManager.GetString("CadastreNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cadastre map-server URL: {0}..
+        /// </summary>
+        internal static string CadastreParam {
+            get {
+                return ResourceManager.GetString("CadastreParam", resourceCulture);
             }
         }
         
@@ -111,6 +129,51 @@ namespace CoGISBot.Telegram {
         internal static string CommandNotFound {
             get {
                 return ResourceManager.GetString("CommandNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Change cadastre map-server URL.
+        /// </summary>
+        internal static string EditCadastreUrl {
+            get {
+                return ResourceManager.GetString("EditCadastreUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Change geocoder URL.
+        /// </summary>
+        internal static string EditGeocoderUrl {
+            get {
+                return ResourceManager.GetString("EditGeocoderUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Change portal&apos;s name.
+        /// </summary>
+        internal static string EditName {
+            get {
+                return ResourceManager.GetString("EditName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Change portal&apos;s URL.
+        /// </summary>
+        internal static string EditUrl {
+            get {
+                return ResourceManager.GetString("EditUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Geo-coder URL: {0}..
+        /// </summary>
+        internal static string GeocoderParam {
+            get {
+                return ResourceManager.GetString("GeocoderParam", resourceCulture);
             }
         }
         
@@ -151,6 +214,15 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Portal&apos;s name: {0}..
+        /// </summary>
+        internal static string NameParam {
+            get {
+                return ResourceManager.GetString("NameParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Open in browser.
         /// </summary>
         internal static string OpenBrowser {
@@ -169,6 +241,24 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Send me new portal&apos;s name....
+        /// </summary>
+        internal static string SendName {
+            get {
+                return ResourceManager.GetString("SendName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Send me new portal&apos;s URL....
+        /// </summary>
+        internal static string SendUrl {
+            get {
+                return ResourceManager.GetString("SendUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Hello, {0}.
         ///You can just write your request to this dialog, and the bot will automatically find the results for the request - maps, addresses, cadastral numbers.
         ///Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given a list of maps by provided search prompt, and the ability to send any card to the current chat..
@@ -176,6 +266,24 @@ namespace CoGISBot.Telegram {
         internal static string Start {
             get {
                 return ResourceManager.GetString("Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The search is performed for maps, addresses, cadastral numbers by search prompt: {0}..
+        /// </summary>
+        internal static string StartedSearch {
+            get {
+                return ResourceManager.GetString("StartedSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Portal&apos;s URL: {0}..
+        /// </summary>
+        internal static string UrlParam {
+            get {
+                return ResourceManager.GetString("UrlParam", resourceCulture);
             }
         }
     }
