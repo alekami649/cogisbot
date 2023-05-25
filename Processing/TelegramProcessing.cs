@@ -118,7 +118,7 @@ public class TelegramProcessing
                 await botClient.LeaveChatAsync(message.Chat);
                 return;
             }
-            if (message.Chat.Type == ChatType.Private && message.ViaBot == null)
+            if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.Default)
             {
                 Resources.Culture = CultureInfo.GetCultureInfo(message.From.LanguageCode ?? "ru");
                 message.Text = message.Text.Trim();
@@ -258,6 +258,34 @@ public class TelegramProcessing
                     #endregion
                 }
             }
+            else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditName)
+            {
+                var newName = message.Text.Trim();
+                GlobalSettings.Instance.Name = newName;
+                GlobalSettings.Instance.Save();
+                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.NameSaved, newName), message.MessageThreadId);
+            }
+            else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditUrl)
+            {
+                var newName = message.Text.Trim();
+                GlobalSettings.Instance.Name = newName;
+                GlobalSettings.Instance.Save();
+                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.UrlSaved, newName), message.MessageThreadId);
+            }
+            else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditGeocoder)
+            {
+                var newName = message.Text.Trim();
+                GlobalSettings.Instance.Name = newName;
+                GlobalSettings.Instance.Save();
+                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.GeocoderSaved, newName), message.MessageThreadId);
+            }
+            else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditCadastre)
+            {
+                var newName = message.Text.Trim();
+                GlobalSettings.Instance.Name = newName;
+                GlobalSettings.Instance.Save();
+                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.CadastreSaved, newName), message.MessageThreadId);
+            }
         }
         catch (Exception ex)
         {
@@ -302,7 +330,7 @@ public class TelegramProcessing
                     States.Add(callbackQuery.From.Id, UserState.Default);
                 }
                 States[callbackQuery.From.Id] = UserState.EditGeocoder;
-                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName, callbackQuery.Message.MessageThreadId);
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendGeocoder, callbackQuery.Message.MessageThreadId);
             }
             else if (callbackQuery.Data.Equals("editCadastre", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -311,7 +339,7 @@ public class TelegramProcessing
                     States.Add(callbackQuery.From.Id, UserState.Default);
                 }
                 States[callbackQuery.From.Id] = UserState.EditCadastre;
-                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName, callbackQuery.Message.MessageThreadId);
+                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre, callbackQuery.Message.MessageThreadId);
             }
         }
     }

@@ -180,4 +180,22 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
   <data name="SendUrl" xml:space="preserve">
     <value>Send me new portal's URL...</value>
   </data>
+  <data name="SendGeocoder" xml:space="preserve">
+    <value>Send me new geocoder's URL...</value>
+  </data>
+  <data name="SendCadastre" xml:space="preserve">
+    <value>Send me new cadstre's map-service URL...</value>
+  </data>
+  <data name="NameSaved" xml:space="preserve">
+    <value>The new name {0} saved.</value>
+  </data>
+  <data name="UrlSaved" xml:space="preserve">
+    <value>The new portal's URL {0} saved.</value>
+  </data>
+  <data name="CadastreSaved" xml:space="preserve">
+    <value>The new cadastre's map-service {0} saved.</value>
+  </data>
+  <data name="GeocoderSaved" xml:space="preserve">
+    <value>The new geocoder URL {0} saved.</value>
+  </data>
 </root>

@@ -1,1 +1,0 @@
-https://cogisdemo.dataeast.com/elitegis/rest/services/common_osmde/ru_geocoder/GeocodeServer

@@ -194,4 +194,22 @@
   <data name="SendUrl" xml:space="preserve">
     <value>Отправьте мне новый URL-адрес портала...</value>
   </data>
+  <data name="SendGeocoder" xml:space="preserve">
+    <value>Отправьте мне новый URL гео-кодера...</value>
+  </data>
+  <data name="SendCadastre" xml:space="preserve">
+    <value>Отправьте мне новый URL мап-сервиса кадастра...</value>
+  </data>
+  <data name="NameSaved" xml:space="preserve">
+    <value>Новое имя {0} установлено.</value>
+  </data>
+  <data name="UrlSaved" xml:space="preserve">
+    <value>Новый URL-адрес {0} установлен.</value>
+  </data>
+  <data name="CadastreSaved" xml:space="preserve">
+    <value>Новый URL мап-сервиса кадастра {0} установлен.</value>
+  </data>
+  <data name="GeocoderSaved" xml:space="preserve">
+    <value>Новый URL гео-кодера {0} установлен.</value>
+  </data>
 </root>

@@ -115,6 +115,15 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The new cadastre&apos;s map-service {0} saved..
+        /// </summary>
+        internal static string CadastreSaved {
+            get {
+                return ResourceManager.GetString("CadastreSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Updated catalog information..
         /// </summary>
         internal static string CatalogFetched {
@@ -178,6 +187,15 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The new geocoder URL {0} saved..
+        /// </summary>
+        internal static string GeocoderSaved {
+            get {
+                return ResourceManager.GetString("GeocoderSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Description.
         /// </summary>
         internal static string MapDescription {
@@ -223,6 +241,15 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The new name {0} saved..
+        /// </summary>
+        internal static string NameSaved {
+            get {
+                return ResourceManager.GetString("NameSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Open in browser.
         /// </summary>
         internal static string OpenBrowser {
@@ -237,6 +264,24 @@ namespace CoGISBot.Telegram {
         internal static string OpenWebapp {
             get {
                 return ResourceManager.GetString("OpenWebapp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Send me new cadstre&apos;s map-service URL....
+        /// </summary>
+        internal static string SendCadastre {
+            get {
+                return ResourceManager.GetString("SendCadastre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Send me new geocoder&apos;s URL....
+        /// </summary>
+        internal static string SendGeocoder {
+            get {
+                return ResourceManager.GetString("SendGeocoder", resourceCulture);
             }
         }
         
@@ -284,6 +329,15 @@ namespace CoGISBot.Telegram {
         internal static string UrlParam {
             get {
                 return ResourceManager.GetString("UrlParam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на The new portal&apos;s URL {0} saved..
+        /// </summary>
+        internal static string UrlSaved {
+            get {
+                return ResourceManager.GetString("UrlSaved", resourceCulture);
             }
         }
     }
