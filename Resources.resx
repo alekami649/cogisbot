@@ -198,4 +198,10 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
   <data name="GeocoderSaved" xml:space="preserve">
     <value>The new geocoder URL {0} saved.</value>
   </data>
+  <data name="InsufficientPermissions" xml:space="preserve">
+    <value>Insufficient permissions to perform the operation.</value>
+  </data>
+  <data name="StatsStart" xml:space="preserve">
+    <value>Maps, selected in inline results, sorted by popularity:</value>
+  </data>
 </root>

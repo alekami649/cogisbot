@@ -1,0 +1,4 @@
+Telegram.Bot.Exceptions.ApiRequestException: Bad Request: query is too old and response timeout expired or query ID is invalid
+   at Telegram.Bot.TelegramBotClient.MakeRequestAsync[TResponse](IRequest`1 request, CancellationToken cancellationToken)
+   at Telegram.Bot.TelegramBotClientExtensions.AnswerInlineQueryAsync(ITelegramBotClient botClient, String inlineQueryId, IEnumerable`1 results, Nullable`1 cacheTime, Nullable`1 isPersonal, String nextOffset, InlineQueryResultsButton button, CancellationToken cancellationToken)
+   at CoGISBot.Telegram.Processing.TelegramProcessing.ProcessInlineQuery(TelegramBotClient botClient, InlineQuery inlineQuery) in C:\Projects\CoGISBot.Telegram\Processing\TelegramProcessing.cs:line 86

@@ -196,6 +196,15 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Insufficient permissions to perform the operation..
+        /// </summary>
+        internal static string InsufficientPermissions {
+            get {
+                return ResourceManager.GetString("InsufficientPermissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Description.
         /// </summary>
         internal static string MapDescription {
@@ -320,6 +329,15 @@ namespace CoGISBot.Telegram {
         internal static string StartedSearch {
             get {
                 return ResourceManager.GetString("StartedSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Maps, selected in inline results, sorted by popularity:.
+        /// </summary>
+        internal static string StatsStart {
+            get {
+                return ResourceManager.GetString("StatsStart", resourceCulture);
             }
         }
         

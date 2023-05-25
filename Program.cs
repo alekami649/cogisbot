@@ -13,6 +13,7 @@ try
     builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
+    GlobalSettings.Instance = GlobalSettings.LoadOrCreate();
     GlobalSettings.Instance.Save();
 
     if (app.Environment.IsDevelopment())

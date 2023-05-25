@@ -212,4 +212,10 @@
   <data name="GeocoderSaved" xml:space="preserve">
     <value>Новый URL гео-кодера {0} установлен.</value>
   </data>
+  <data name="InsufficientPermissions" xml:space="preserve">
+    <value>Недостаточно прав для выполнения операции.</value>
+  </data>
+  <data name="StatsStart" xml:space="preserve">
+    <value>Карты выбранные в inline-результатах, сортированные по популярности:</value>
+  </data>
 </root>

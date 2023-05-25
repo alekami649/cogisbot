@@ -23,6 +23,7 @@ public class TelegramProcessing
     public static string DefaultBotUsername { get; set; } = "cogisdemo_bot";
     public static Dictionary<long, UserState> States { get; set; } = new();
     static object ErrorsFile { get; set; } = new();
+    static object StatsFile { get; set; } = new();
     public static CatalogNodesReponse CatalogNodes { get; set; } = FetchCatalogNodes();
 
     public static async Task ProcessUpdate(TelegramBotClient botClient, Update update)
@@ -36,6 +37,14 @@ public class TelegramProcessing
             else if (update.Type == UpdateType.InlineQuery && update.InlineQuery != null)
             {
                 await ProcessInlineQuery(botClient, update.InlineQuery);
+            }
+            else if (update.Type == UpdateType.ChosenInlineResult && update.ChosenInlineResult != null)
+            {
+                ProcessChosenInlineResult(update.ChosenInlineResult);
+            }
+            else if (update.Type == UpdateType.CallbackQuery && update.CallbackQuery != null)
+            {
+                await ProcessCallbackQuery(botClient, update.CallbackQuery);
             }
         }
         catch (Exception ex)
@@ -84,6 +93,15 @@ public class TelegramProcessing
             }
         }
     }
+
+    public static void ProcessChosenInlineResult(ChosenInlineResult chosenInlineResult)
+    {
+        var mapUrl = chosenInlineResult.ResultId;
+        lock (StatsFile)
+        {
+            System.IO.File.AppendAllText("stats.log", mapUrl, Encoding.UTF8);
+        }
+    }
     #endregion
 
     #region Messages
@@ -113,7 +131,6 @@ public class TelegramProcessing
             {
                 States.Add(message.From.Id, UserState.Default);
             }
-
             if (message.Text == null || message.Type != MessageType.Text)
             {
                 return;
@@ -168,7 +185,41 @@ public class TelegramProcessing
 
                         var buttons = new List<List<InlineKeyboardButton>>();
                         var firstLine = new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.EditName, "editName"), InlineKeyboardButton.WithCallbackData(Resources.EditUrl, "editUrl") };
-                        var secoundLine = new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.EditGeocoderUrl, "editGeocoderUrl"), InlineKeyboardButton.WithCallbackData(Resources.EditCadastreUrl, "editCadastreUrl") };
+                        var secondLine = new List<InlineKeyboardButton> { InlineKeyboardButton.WithCallbackData(Resources.EditGeocoderUrl, "editGeocoder"), InlineKeyboardButton.WithCallbackData(Resources.EditCadastreUrl, "editCadastre") };
+                        buttons.Add(firstLine);
+                        buttons.Add(secondLine);
+
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId, replyMarkup: new InlineKeyboardMarkup(buttons));
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(message.Chat.Id, Resources.InsufficientPermissions, message.MessageThreadId);
+                    }
+                }
+                else if (message.Text.IsCommandThrowed("/stats", myself.Username))
+                {
+                    if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
+                    {
+                        var builder = new StringBuilder();
+                        var dictionary = new Dictionary<string, long>();
+
+                        lock (StatsFile)
+                        {
+                            var lines = System.IO.File.ReadAllLines("stats.log", Encoding.UTF8);
+                            dictionary = new Dictionary<string, long>(lines.GroupBy(x => x).ToDictionary(x => x.Key, x => x.LongCount()).OrderByDescending(x => x.Value));
+                        }
+
+                        builder.AppendLine(Resources.StatsStart);
+                        var i = 1;
+                        foreach (var line in dictionary.Keys)
+                        {
+                            builder.AppendLine($"{i}. {line}.");
+                        }
+                        await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId);
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(message.Chat.Id, Resources.InsufficientPermissions, message.MessageThreadId);
                     }
                 }
                 else if (message.Text.StartsWith('/'))
@@ -265,31 +316,63 @@ public class TelegramProcessing
             }
             else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditName)
             {
-                var newName = message.Text.Trim();
-                GlobalSettings.Instance.Name = newName;
-                GlobalSettings.Instance.Save();
-                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.NameSaved, newName), message.MessageThreadId);
+                if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
+                {
+                    var newName = message.Text.Trim();
+                    GlobalSettings.Instance.Name = newName;
+                    GlobalSettings.Instance.Save();
+                    States[message.From.Id] = UserState.Default;
+                    await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.NameSaved, newName), message.MessageThreadId);
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.InsufficientPermissions, message.MessageThreadId);
+                }
             }
             else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditUrl)
             {
-                var newName = message.Text.Trim();
-                GlobalSettings.Instance.Name = newName;
-                GlobalSettings.Instance.Save();
-                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.UrlSaved, newName), message.MessageThreadId);
+                if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
+                {
+                    var newUrl = message.Text.Trim();
+                    GlobalSettings.Instance.Url = newUrl;
+                    GlobalSettings.Instance.Save();
+                    States[message.From.Id] = UserState.Default;
+                    await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.UrlSaved, newUrl), message.MessageThreadId);
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.InsufficientPermissions, message.MessageThreadId);
+                }
             }
             else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditGeocoder)
             {
-                var newName = message.Text.Trim();
-                GlobalSettings.Instance.Name = newName;
-                GlobalSettings.Instance.Save();
-                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.GeocoderSaved, newName), message.MessageThreadId);
+                if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
+                {
+                    var newGeocoder = message.Text.Trim();
+                    GlobalSettings.Instance.GeocoderUrl = newGeocoder;
+                    GlobalSettings.Instance.Save();
+                    States[message.From.Id] = UserState.Default;
+                    await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.GeocoderSaved, newGeocoder), message.MessageThreadId);
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.InsufficientPermissions, message.MessageThreadId);
+                }
             }
             else if (message.Chat.Type == ChatType.Private && message.ViaBot == null && States[message.From.Id] == UserState.EditCadastre)
             {
-                var newName = message.Text.Trim();
-                GlobalSettings.Instance.Name = newName;
-                GlobalSettings.Instance.Save();
-                await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.CadastreSaved, newName), message.MessageThreadId);
+                if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
+                {
+                    var newCadastre = message.Text.Trim();
+                    GlobalSettings.Instance.CadastreUrl = newCadastre;
+                    GlobalSettings.Instance.Save();
+                    States[message.From.Id] = UserState.Default;
+                    await botClient.SendTextMessageAsync(chatId: message.Chat.Id, string.Format(Resources.CadastreSaved, newCadastre), message.MessageThreadId);
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(message.Chat.Id, Resources.InsufficientPermissions, message.MessageThreadId);
+                }
             }
         }
         catch (Exception ex)
@@ -312,39 +395,67 @@ public class TelegramProcessing
         {
             if (callbackQuery.Data.Equals("editName", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (!States.ContainsKey(callbackQuery.From.Id))
+                if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    States.Add(callbackQuery.From.Id, UserState.Default);
+                    if (!States.ContainsKey(callbackQuery.From.Id))
+                    {
+                        States.Add(callbackQuery.From.Id, UserState.Default);
+                    }
+                    States[callbackQuery.From.Id] = UserState.EditCadastre;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre, callbackQuery.Message.MessageThreadId);
                 }
-                States[callbackQuery.From.Id] = UserState.EditName;
-                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName, callbackQuery.Message.MessageThreadId);
+                else
+                {
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions, callbackQuery.Message.MessageThreadId);
+                }
             }
             else if (callbackQuery.Data.Equals("editUrl", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (!States.ContainsKey(callbackQuery.From.Id))
+                if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    States.Add(callbackQuery.From.Id, UserState.Default);
+                    if (!States.ContainsKey(callbackQuery.From.Id))
+                    {
+                        States.Add(callbackQuery.From.Id, UserState.Default);
+                    }
+                    States[callbackQuery.From.Id] = UserState.EditCadastre;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre, callbackQuery.Message.MessageThreadId);
                 }
-                States[callbackQuery.From.Id] = UserState.EditUrl;
-                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendUrl, callbackQuery.Message.MessageThreadId);
+                else
+                {
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions, callbackQuery.Message.MessageThreadId);
+                }
             }
             else if (callbackQuery.Data.Equals("editGeocoder", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (!States.ContainsKey(callbackQuery.From.Id))
+                if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    States.Add(callbackQuery.From.Id, UserState.Default);
+                    if (!States.ContainsKey(callbackQuery.From.Id))
+                    {
+                        States.Add(callbackQuery.From.Id, UserState.Default);
+                    }
+                    States[callbackQuery.From.Id] = UserState.EditCadastre;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre, callbackQuery.Message.MessageThreadId);
                 }
-                States[callbackQuery.From.Id] = UserState.EditGeocoder;
-                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendGeocoder, callbackQuery.Message.MessageThreadId);
+                else
+                {
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions, callbackQuery.Message.MessageThreadId);
+                }
             }
             else if (callbackQuery.Data.Equals("editCadastre", StringComparison.InvariantCultureIgnoreCase))
             {
-                if (!States.ContainsKey(callbackQuery.From.Id))
+                if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    States.Add(callbackQuery.From.Id, UserState.Default);
+                    if (!States.ContainsKey(callbackQuery.From.Id))
+                    {
+                        States.Add(callbackQuery.From.Id, UserState.Default);
+                    }
+                    States[callbackQuery.From.Id] = UserState.EditCadastre;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre, callbackQuery.Message.MessageThreadId);
                 }
-                States[callbackQuery.From.Id] = UserState.EditCadastre;
-                await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre, callbackQuery.Message.MessageThreadId);
+                else
+                {
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions, callbackQuery.Message.MessageThreadId);
+                }
             }
         }
     }
