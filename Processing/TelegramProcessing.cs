@@ -109,6 +109,11 @@ public class TelegramProcessing
     {
         try
         {
+            if (message.From != null && !States.ContainsKey(message.From.Id))
+            {
+                States.Add(message.From.Id, UserState.Default);
+            }
+
             if (message.Text == null || message.Type != MessageType.Text)
             {
                 return;
@@ -145,12 +150,12 @@ public class TelegramProcessing
                         var builder = new StringBuilder();
                         foreach (var map in maps)
                         {
-                            builder.AppendFormat("[{0}]({1}) - [{2}]({3})", map.Caption, map.FullUrl, map.Info.DescriptionCaption, map.Info.DescriptionLink);
+                            builder.AppendFormat("[{0}]({1}) - [{2}]({3})" + "\n", map.Caption, map.FullUrl, map.Info.DescriptionCaption, map.Info.DescriptionLink);
                         }
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId, ParseMode.Markdown);
                     }
                 }
-                else if (message.Text.IsCommandThrowed("/adminpanel", myself.Username))
+                else if (message.Text.IsCommandThrowed("/admin", myself.Username))
                 {
                     if (GlobalSettings.Instance.Admins.Contains(message.From.Id))
                     {
