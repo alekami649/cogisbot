@@ -1,5 +1,5 @@
 using CoGISBot.Telegram;
-using CoGISBot.Telegram.Processing;
+using System.Text;
 using Telegram.Bot;
 
 try
@@ -13,6 +13,11 @@ try
     builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
+
+    if (!File.Exists("stats.log"))
+    {
+        File.WriteAllText("stats.log", "", Encoding.UTF8);
+    }
     GlobalSettings.Instance = GlobalSettings.LoadOrCreate();
     GlobalSettings.Instance.Save();
 

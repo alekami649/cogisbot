@@ -204,4 +204,10 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
   <data name="StatsStart" xml:space="preserve">
     <value>Maps, selected in inline results, sorted by popularity:</value>
   </data>
+  <data name="NoInlineRequests" xml:space="preserve">
+    <value>No inline-mode requests have been throwed.</value>
+  </data>
+  <data name="InlineClicksCount" xml:space="preserve">
+    <value>inline-mode clicks</value>
+  </data>
 </root>

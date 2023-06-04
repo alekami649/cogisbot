@@ -218,4 +218,10 @@
   <data name="StatsStart" xml:space="preserve">
     <value>Карты выбранные в inline-результатах, сортированные по популярности:</value>
   </data>
+  <data name="NoInlineRequests" xml:space="preserve">
+    <value>Никаких запросов в Inline-режиме отправлено не было.</value>
+  </data>
+  <data name="InlineClicksCount" xml:space="preserve">
+    <value>нажатий в inline-режиме</value>
+  </data>
 </root>

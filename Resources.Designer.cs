@@ -196,6 +196,15 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на inline-mode clicks.
+        /// </summary>
+        internal static string InlineClicksCount {
+            get {
+                return ResourceManager.GetString("InlineClicksCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Insufficient permissions to perform the operation..
         /// </summary>
         internal static string InsufficientPermissions {
@@ -255,6 +264,15 @@ namespace CoGISBot.Telegram {
         internal static string NameSaved {
             get {
                 return ResourceManager.GetString("NameSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No inline-mode requests have been throwed..
+        /// </summary>
+        internal static string NoInlineRequests {
+            get {
+                return ResourceManager.GetString("NoInlineRequests", resourceCulture);
             }
         }
         

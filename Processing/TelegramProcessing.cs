@@ -99,7 +99,7 @@ public class TelegramProcessing
         var mapUrl = chosenInlineResult.ResultId;
         lock (StatsFile)
         {
-            System.IO.File.AppendAllText("stats.log", mapUrl, Encoding.UTF8);
+            System.IO.File.AppendAllText("stats.log", mapUrl + "\n", Encoding.UTF8);
         }
     }
     #endregion
@@ -211,9 +211,18 @@ public class TelegramProcessing
 
                         builder.AppendLine(Resources.StatsStart);
                         var i = 1;
-                        foreach (var line in dictionary.Keys)
+
+                        if (dictionary.Any())
                         {
-                            builder.AppendLine($"{i}. {line}.");
+                            foreach (var key in dictionary.Keys)
+                            {
+                                builder.AppendLine($"{i}. {key} ({dictionary[key]} {Resources.InlineClicksCount}).");
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            builder.AppendLine(Resources.NoInlineRequests);
                         }
                         await botClient.SendTextMessageAsync(message.Chat.Id, builder.ToString(), message.MessageThreadId);
                     }
