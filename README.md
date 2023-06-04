@@ -1,4 +1,4 @@
-# CoGIS-powered Telegram bot
+# Unofficial CoGIS-powered Telegram bot
 
 You can try it via [@cogisdemo_bot](https://t.me/cogisdemo_bot).
 
