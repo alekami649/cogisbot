@@ -12,17 +12,16 @@ public class CatalogNodesReponse
 
     public List<CatalogItem> GetMaps(int count)
     {
-        return CatalogNodes.First().CatalogCategories.SelectMany(x => x.CatalogItems).Distinct().Take(count).ToList();
+        var endBlocks = CatalogNodes.SelectMany(x => x.CatalogCategories).SelectMany(x => CatalogCategory.GetEndblocks(x.CatalogItems)).ToList();
+        return endBlocks.DistinctBy(x => x.Caption).Take(count).ToList();
     }
 
     public List<CatalogItem> Search(string query)
     {
         var result = new List<CatalogItem>();
-        foreach (var category in CatalogNodes.First().CatalogCategories)
-        {
-            result.AddRange(category.Search(query));
-        }
-        return result.Distinct().ToList();
+        var endBlocks = CatalogNodes.SelectMany(x => x.CatalogCategories).SelectMany(x => CatalogCategory.GetEndblocks(x.CatalogItems)).ToList();
+        result.AddRange(endBlocks.Where(x => x.ValidateSearch(query)));
+        return result.DistinctBy(x => x.Caption).ToList();
     }
 }
 
@@ -55,9 +54,26 @@ public class CatalogCategory
     [JsonProperty("Items")]
     public List<CatalogItem> CatalogItems { get; set; } = new List<CatalogItem>();
 
+    public static List<CatalogItem> GetEndblocks(List<CatalogItem> items)
+    {
+        var result = new List<CatalogItem>();
+        foreach (var item in items)
+        {
+            if (item.Items != null && item.Items.Any())
+            {
+                result.AddRange(GetEndblocks(item.Items.ToList()));
+            }
+            else
+            {
+                result.Add(item);
+            }
+        }
+        return result;
+    }
+
     public List<CatalogItem> Search(string query)
     {
-        var list = CatalogItems.Where(x => x.ValidateSearch(query));
+        var list = GetEndblocks(CatalogItems).Where(x => x.ValidateSearch(query));
         if (list.Any())
         {
             return list.ToList();

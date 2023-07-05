@@ -1,6 +1,4 @@
-﻿using Telegram.Bot.Types.Enums;
-
-namespace CoGISBot.Telegram.Helpers;
+﻿namespace CoGISBot.Telegram.Helpers;
 
 public static class TelegramExtensions
 {
