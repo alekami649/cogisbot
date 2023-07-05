@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CoGISBot.Telegram;
 
-[JsonObject(MemberSerialization.OptIn, NamingStrategyType = typeof(SnakeCaseNamingStrategy))]
+[JsonObject(MemberSerialization.OptIn, NamingStrategyType = typeof(CamelCaseNamingStrategy))]
 public class GlobalSettings
 {
     [JsonProperty("name"), JsonRequired]
