@@ -424,8 +424,8 @@ public class TelegramProcessing
                     {
                         States.Add(callbackQuery.From.Id, UserState.Default);
                     }
-                    States[callbackQuery.From.Id] = UserState.EditCadastre;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre);
+                    States[callbackQuery.From.Id] = UserState.EditName;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendName);
                 }
                 else
                 {
@@ -440,8 +440,8 @@ public class TelegramProcessing
                     {
                         States.Add(callbackQuery.From.Id, UserState.Default);
                     }
-                    States[callbackQuery.From.Id] = UserState.EditCadastre;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre);
+                    States[callbackQuery.From.Id] = UserState.EditUrl;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendUrl);
                 }
                 else
                 {
@@ -456,8 +456,8 @@ public class TelegramProcessing
                     {
                         States.Add(callbackQuery.From.Id, UserState.Default);
                     }
-                    States[callbackQuery.From.Id] = UserState.EditCadastre;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendCadastre);
+                    States[callbackQuery.From.Id] = UserState.EditGeocoder;
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.SendGeocoder);
                 }
                 else
                 {
@@ -484,7 +484,7 @@ public class TelegramProcessing
             {
                 if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    var state = GlobalSettings.Instance.EnableMapsSearch ? Resources.Enabled : Resources.Disabled;
+                    var state = !GlobalSettings.Instance.EnableMapsSearch ? Resources.Enabled : Resources.Disabled;
                     GlobalSettings.Instance.EnableMapsSearch = !GlobalSettings.Instance.EnableMapsSearch;
                     await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedMapsSearch, state));
                 }
@@ -497,9 +497,9 @@ public class TelegramProcessing
             {
                 if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    var state = GlobalSettings.Instance.EnableAddressSearch ? Resources.Enabled : Resources.Disabled;
+                    var state = !GlobalSettings.Instance.EnableAddressSearch ? Resources.Enabled : Resources.Disabled;
                     GlobalSettings.Instance.EnableAddressSearch = !GlobalSettings.Instance.EnableAddressSearch;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedMapsSearch, state));
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedAddressSearch, state));
                 }
                 else
                 {
@@ -510,9 +510,9 @@ public class TelegramProcessing
             {
                 if (GlobalSettings.Instance.Admins.Contains(callbackQuery.From.Id))
                 {
-                    var state = GlobalSettings.Instance.EnableCadastreSearch ? Resources.Enabled : Resources.Disabled;
+                    var state = !GlobalSettings.Instance.EnableCadastreSearch ? Resources.Enabled : Resources.Disabled;
                     GlobalSettings.Instance.EnableCadastreSearch = !GlobalSettings.Instance.EnableCadastreSearch;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedMapsSearch, state));
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedCadastreSearch, state));
                 }
                 else
                 {
