@@ -486,7 +486,7 @@ public class TelegramProcessing
                 {
                     var state = GlobalSettings.Instance.EnableMapsSearch ? Resources.Enabled : Resources.Disabled;
                     GlobalSettings.Instance.EnableMapsSearch = !GlobalSettings.Instance.EnableMapsSearch;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions);
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedMapsSearch, state));
                 }
                 else
                 {
@@ -499,7 +499,7 @@ public class TelegramProcessing
                 {
                     var state = GlobalSettings.Instance.EnableAddressSearch ? Resources.Enabled : Resources.Disabled;
                     GlobalSettings.Instance.EnableAddressSearch = !GlobalSettings.Instance.EnableAddressSearch;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions);
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedMapsSearch, state));
                 }
                 else
                 {
@@ -512,7 +512,7 @@ public class TelegramProcessing
                 {
                     var state = GlobalSettings.Instance.EnableCadastreSearch ? Resources.Enabled : Resources.Disabled;
                     GlobalSettings.Instance.EnableCadastreSearch = !GlobalSettings.Instance.EnableCadastreSearch;
-                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, Resources.InsufficientPermissions);
+                    await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, string.Format(Resources.ChangedMapsSearch, state));
                 }
                 else
                 {
