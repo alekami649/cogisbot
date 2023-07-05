@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /telegram.secret
 /HFToken.secret
+/CatalogNodes.json
