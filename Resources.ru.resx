@@ -224,4 +224,28 @@
   <data name="InlineClicksCount" xml:space="preserve">
     <value>нажатий в inline-режиме</value>
   </data>
+  <data name="EnableMapsSearch" xml:space="preserve">
+    <value>Включить/выключить поиск в картах.</value>
+  </data>
+  <data name="EnableAddressSearch" xml:space="preserve">
+    <value>Включить/выключить поиск по адресам.</value>
+  </data>
+  <data name="EnableCadastreSearch" xml:space="preserve">
+    <value>Включить/выключить поиск по кадастровым номерам.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Включен</value>
+  </data>
+  <data name="ChangedMapsSearch" xml:space="preserve">
+    <value>{0} поиск по картам.</value>
+  </data>
+  <data name="ChangedCadastreSearch" xml:space="preserve">
+    <value>{0} поиск по кадастровым номерам.</value>
+  </data>
+  <data name="ChangedAddressSearch" xml:space="preserve">
+    <value>{0} поиск по адресам.</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Выключен</value>
+  </data>
 </root>

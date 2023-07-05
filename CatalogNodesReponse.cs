@@ -13,7 +13,7 @@ public class CatalogNodesReponse
     public List<CatalogItem> GetMaps(int count)
     {
         var endBlocks = CatalogNodes.SelectMany(x => x.CatalogCategories).SelectMany(x => CatalogCategory.GetEndblocks(x.CatalogItems)).ToList();
-        return endBlocks.DistinctBy(x => x.Caption).Take(count).ToList();
+        return endBlocks.DistinctBy(x => x.FullUrl).Take(count).ToList();
     }
 
     public List<CatalogItem> Search(string query)
@@ -21,7 +21,7 @@ public class CatalogNodesReponse
         var result = new List<CatalogItem>();
         var endBlocks = CatalogNodes.SelectMany(x => x.CatalogCategories).SelectMany(x => CatalogCategory.GetEndblocks(x.CatalogItems)).ToList();
         result.AddRange(endBlocks.Where(x => x.ValidateSearch(query)));
-        return result.DistinctBy(x => x.Caption).ToList();
+        return result.DistinctBy(x => x.FullUrl).ToList();
     }
 }
 
@@ -111,15 +111,15 @@ public class CatalogItem
         }
     }
 
-    public string GetText()
+    public string GetShareText()
     {
         return string.Format(Resources.MapShare, Caption, GetUrl(), GlobalSettings.Instance.Name, GlobalSettings.Instance.Url);
     }
 
-    public InlineQueryResultArticle GetArticle()
+    public InlineQueryResultArticle GetInlineQueryArticle()
     {
         var keyboard = new InlineKeyboardMarkup(new[] { InlineKeyboardButton.WithUrl(Resources.OpenBrowser, GetUrl()) });
-        var result = new InlineQueryResultArticle(Url, Caption, new InputTextMessageContent(GetText())
+        var result = new InlineQueryResultArticle(Url, Caption, new InputTextMessageContent(GetShareText())
         {
             DisableWebPagePreview = false,
             ParseMode = ParseMode.Html,
@@ -130,11 +130,11 @@ public class CatalogItem
         return result;
     }
 
-    public CatalogItem[]? Search(string query)
+    public CatalogItem[]? SearchInside(string query)
     {
         if (Items != null)
         {
-            var subItems = Items.Where(x => x.Items != null).SelectMany(x => x.Search(query) ?? Array.Empty<CatalogItem>()).ToArray();
+            var subItems = Items.Where(x => x.Items != null).SelectMany(x => x.SearchInside(query) ?? Array.Empty<CatalogItem>()).ToArray();
             return Items.Where(x => x.ValidateSearch(query)).Concat(subItems).Where(x => x.Items == null).ToArray();
         }
         return null;
@@ -162,19 +162,19 @@ public class CatalogItemInfo
     public string ImageGuid { get; set; } = "";
 
     [JsonProperty("LinkControlCaption")]
-    public string DescriptionCaption { get; set; } = "Описание";
+    public string DescriptionCaption { get; set; } = "Description";
 
     [JsonProperty("LinkControlUrl")]
     public string DescriptionLink { get; set; } = "";
 
     public string GetDescriptionText()
     {
-        return $"<a href=\"{DescriptionLink}\">{Resources.MapDescription}</a>";
+        return $"<a href=\"{DescriptionLink}\">{DescriptionCaption ?? Resources.MapDescription}</a>";
     }
 
     public string GetImageUrl()
     {
-        return $"https://cogisdemo.dataeast.com/portal/Images/{ImageGuid}.png";
+        return $"{GlobalSettings.Instance.Url}/Images/{ImageGuid}.png";
     }
 
     public Uri GetImageUri()

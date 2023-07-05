@@ -1,1 +1,11 @@
-﻿{"name":"CoGIS","url":"https://cogisdemo.dataeast.com/portal","catalogUrl":"https://cogisdemo.dataeast.com/portal/Catalog/GetCatalogNodes","admins":[1864373905,1118251133],"cadastreUrl":"https://cogisdemo.dataeast.com/elitegis/rest/services/solutions_cadastre/cadastre/MapServer","geocoderUrl":"https://cogisdemo.dataeast.com/elitegis/rest/services/common_osmde/ru_geocoder/GeocodeServer"}
+﻿{
+  "addressSearch": true,
+  "admins": [ 1864373905, 1118251133 ],
+  "cadastreSearch": true,
+  "cadastreUrl": "https://cogisdemo.dataeast.com/elitegis/rest/services/solutions_cadastre/cadastre/MapServer",
+  "catalogUrl": "https://cogisdemo.dataeast.com/portal/Catalog/GetCatalogNodes",
+  "geocoderUrl": "https://cogisdemo.dataeast.com/elitegis/rest/services/common_osmde/ru_geocoder/GeocodeServer",
+  "mapsSearch": true,
+  "name": "CoGIS",
+  "url": "https://cogisdemo.dataeast.com/portal"
+}

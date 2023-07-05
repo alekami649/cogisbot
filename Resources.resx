@@ -104,7 +104,7 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
     <comment>{0} - first name; {1} - bot's username</comment>
   </data>
   <data name="MapResultsStart" xml:space="preserve">
-    <value>Maps from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "{0}":</value>
+    <value>Maps from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "&lt;b&gt;{0}&lt;/b&gt;":</value>
     <comment>{0} - search prompt; {1} - brand name; {2} - brand url</comment>
   </data>
   <data name="MapsNotFound" xml:space="preserve">
@@ -138,7 +138,8 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
     <value>No cadastre numbers found by your search prompt.</value>
   </data>
   <data name="CadastreResultsStart" xml:space="preserve">
-    <value>Cadastre numbers from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "{0}":</value>
+    <value>Cadastre numbers from &lt;a href="{2}"&gt;{1}&lt;/a&gt; according to search prompt "&lt;b&gt;{0}&lt;/b&gt;
+":</value>
     <comment>{0} - search prompt; {1} - brand name; {2} - brand url</comment>
   </data>
   <data name="CatalogFetched" xml:space="preserve">
@@ -209,5 +210,29 @@ Also, in any dialog, you can use `@{1} (your search prompt)`, you will be given 
   </data>
   <data name="InlineClicksCount" xml:space="preserve">
     <value>inline-mode clicks</value>
+  </data>
+  <data name="EnableMapsSearch" xml:space="preserve">
+    <value>Enable/disable maps searching.</value>
+  </data>
+  <data name="EnableAddressSearch" xml:space="preserve">
+    <value>Enable/disable address searching.</value>
+  </data>
+  <data name="EnableCadastreSearch" xml:space="preserve">
+    <value>Enable/disable cadastre numbers searching.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="ChangedMapsSearch" xml:space="preserve">
+    <value>{0} maps searching.</value>
+  </data>
+  <data name="ChangedCadastreSearch" xml:space="preserve">
+    <value>{0} cadastre numbers searching.</value>
+  </data>
+  <data name="ChangedAddressSearch" xml:space="preserve">
+    <value>{0} address searching.</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
   </data>
 </root>

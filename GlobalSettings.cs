@@ -25,6 +25,15 @@ public class GlobalSettings
     [JsonProperty("geocoderUrl")]
     public string GeocoderUrl { get; set; } = "https://cogisdemo.dataeast.com/elitegis/rest/services/common_osmde/ru_geocoder/GeocodeServer";
 
+    [JsonProperty("addressSearch")]
+    public bool EnableAddressSearch { get; set; } = true;
+
+    [JsonProperty("cadastreSearch")]
+    public bool EnableCadastreSearch { get; set; } = true;
+
+    [JsonProperty("mapsSearch")]
+    public bool EnableMapsSearch { get; set; } = true;
+
     public static GlobalSettings Instance { get; set; } = LoadOrCreate();
 
     public static GlobalSettings LoadOrCreate(string filePath = "globalSettings.json")

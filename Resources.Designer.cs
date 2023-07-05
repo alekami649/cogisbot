@@ -106,7 +106,8 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Cadastre numbers from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;{0}&quot;:.
+        ///   Ищет локализованную строку, похожую на Cadastre numbers from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;&lt;b&gt;{0}&lt;/b&gt;
+        ///&quot;:.
         /// </summary>
         internal static string CadastreResultsStart {
             get {
@@ -133,11 +134,47 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на {0} address searching..
+        /// </summary>
+        internal static string ChangedAddressSearch {
+            get {
+                return ResourceManager.GetString("ChangedAddressSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на {0} cadastre numbers searching..
+        /// </summary>
+        internal static string ChangedCadastreSearch {
+            get {
+                return ResourceManager.GetString("ChangedCadastreSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на {0} maps searching..
+        /// </summary>
+        internal static string ChangedMapsSearch {
+            get {
+                return ResourceManager.GetString("ChangedMapsSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Command {0} not found..
         /// </summary>
         internal static string CommandNotFound {
             get {
                 return ResourceManager.GetString("CommandNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Disabled.
+        /// </summary>
+        internal static string Disabled {
+            get {
+                return ResourceManager.GetString("Disabled", resourceCulture);
             }
         }
         
@@ -174,6 +211,42 @@ namespace CoGISBot.Telegram {
         internal static string EditUrl {
             get {
                 return ResourceManager.GetString("EditUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Enable/disable address searching..
+        /// </summary>
+        internal static string EnableAddressSearch {
+            get {
+                return ResourceManager.GetString("EnableAddressSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Enable/disable cadastre numbers searching..
+        /// </summary>
+        internal static string EnableCadastreSearch {
+            get {
+                return ResourceManager.GetString("EnableCadastreSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Enabled.
+        /// </summary>
+        internal static string Enabled {
+            get {
+                return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Enable/disable maps searching..
+        /// </summary>
+        internal static string EnableMapsSearch {
+            get {
+                return ResourceManager.GetString("EnableMapsSearch", resourceCulture);
             }
         }
         
@@ -223,7 +296,7 @@ namespace CoGISBot.Telegram {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Maps from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;{0}&quot;:.
+        ///   Ищет локализованную строку, похожую на Maps from &lt;a href=&quot;{2}&quot;&gt;{1}&lt;/a&gt; according to search prompt &quot;&lt;b&gt;{0}&lt;/b&gt;&quot;:.
         /// </summary>
         internal static string MapResultsStart {
             get {
