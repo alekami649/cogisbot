@@ -15,7 +15,7 @@ public class TelegramProcessing
     public static CatalogNodesReponse FetchCatalogNodes()
     {
         using var client = new HttpClient();
-        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri("https://cogisdemo.dataeast.com/portal/Catalog/GetCatalogNodes"));
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(GlobalSettings.Instance.CatalogUrl ?? "https://cogisdemo.dataeast.com/portal/Catalog/GetCatalogNodes"));
         using var response = client.Send(request);
         return JsonConvert.DeserializeObject<CatalogNodesReponse>(response.Content.ReadAsStringAsync().Result) ?? new();
     }
